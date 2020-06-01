@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         accentColor: Color(0xffFF5C27),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AddCarousel(),
+      home: HomeView(),
     );
   }
 }

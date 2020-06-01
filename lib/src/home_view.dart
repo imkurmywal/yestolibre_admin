@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
+import 'package:yestolibre_admin/src/add_partner.dart';
+import 'package:yestolibre_admin/src/merchant_view.dart';
+import 'package:yestolibre_admin/src/models/merchant.dart';
 import 'package:yestolibre_admin/widgets/view_merchant_inlist.dart';
 
 class HomeView extends StatefulWidget {
@@ -7,6 +11,25 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  List<Merchant> allMerchants = List<Merchant>();
+  bool _isFetching = true;
+
+  void getList() async {
+    MerchantDB.shared.getMerchants(fetched: (List<Merchant> merchants) {
+      setState(() {
+        allMerchants = merchants;
+        _isFetching = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,17 +63,41 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
       ),
-      body: Container(
-        child: ListView.builder(
-            itemCount: 120,
-            itemBuilder: (context, index) {
-              return ViewMerchantInList();
-            }),
-      ),
+      body: _isFetching
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : allMerchants.length == 0
+              ? Center(
+                  child: Text("No Partners found"),
+                )
+              : Container(
+                  child: ListView.builder(
+                      itemCount: allMerchants.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MerchantView(
+                                          merchant: allMerchants[index],
+                                        )));
+                          },
+                          child: ViewMerchantInList(
+                            merchant: allMerchants[index],
+                          ),
+                        );
+                      }),
+                ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          print("Pressed..");
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (cotnext) => AddPartner(),
+              ));
         },
       ),
     );

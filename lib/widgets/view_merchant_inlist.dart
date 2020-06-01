@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:yestolibre_admin/src/models/merchant.dart';
 
 class ViewMerchantInList extends StatelessWidget {
+  Merchant merchant;
+  ViewMerchantInList({@required this.merchant});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +20,7 @@ class ViewMerchantInList extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Image.network(
-                "https://1000logos.net/wp-content/uploads/2016/10/Burger-King-Logo.png",
+                merchant.logoUrl,
                 width: 80,
                 height: 80,
               ),
@@ -31,7 +34,7 @@ class ViewMerchantInList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "merchant name",
+                  merchant.name,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   maxLines: 2,
                 ),
@@ -39,7 +42,7 @@ class ViewMerchantInList extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  "SomeAddress",
+                  merchant.address,
                   style: TextStyle(
                     fontSize: 15,
                   ),
@@ -60,7 +63,7 @@ class ViewMerchantInList extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                      "Eat",
+                      merchant.category,
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                     ),

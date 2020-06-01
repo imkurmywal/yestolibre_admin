@@ -32,14 +32,14 @@ class OfferInList implements ListItem {
           ),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   merchant.offers[index - 1].title,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
-                  height: 3,
+                  height: 10,
                 ),
                 Text(
                   "${merchant.offers[index - 1].type == "free" ? "FREE" : merchant.offers[index - 1].offPercent + " OFF"}",
@@ -48,32 +48,32 @@ class OfferInList implements ListItem {
                 SizedBox(
                   height: 3,
                 ),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ViewOffer(
-                                  merchant: merchant,
-                                  index: index - 1,
-                                )));
-                  },
-                  child: Container(
-                    width: 80,
-                    height: 30,
-                    child: Center(
-                      child: Text(
-                        "Claim",
-                        style: TextStyle(fontSize: 17),
-                      ),
-                    ),
-                    // padding: EdgeInsets.all(2),
-                  ),
-                ),
+                // RaisedButton(
+                //   color: Theme.of(context).primaryColor,
+                //   textColor: Colors.white,
+                //   shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(4)),
+                //   onPressed: () {
+                //     Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) => ViewOffer(
+                //                   merchant: merchant,
+                //                   index: index - 1,
+                //                 )));
+                //   },
+                //   child: Container(
+                //     width: 80,
+                //     height: 30,
+                //     child: Center(
+                //       child: Text(
+                //         "Claim",
+                //         style: TextStyle(fontSize: 17),
+                //       ),
+                //     ),
+                //     // padding: EdgeInsets.all(2),
+                //   ),
+                // ),
               ],
             ),
           )
