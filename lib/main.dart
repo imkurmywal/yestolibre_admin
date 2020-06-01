@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:yestolibre_admin/src/add_carousel.dart';
+import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/add_partner.dart';
 import 'package:yestolibre_admin/src/home_view.dart';
 
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
         accentColor: Color(0xffFF5C27),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AddPartner(),
+      home: AddCarousel(),
     );
   }
 }
