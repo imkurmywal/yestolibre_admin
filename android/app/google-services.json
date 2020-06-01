@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "759263621762",
+    "firebase_url": "https://yestolibreapp-4657e.firebaseio.com",
+    "project_id": "yestolibreapp-4657e",
+    "storage_bucket": "yestolibreapp-4657e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759263621762:android:96b54578d9268e5ecb3a9b",
+        "android_client_info": {
+          "package_name": "com.yestolibre"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759263621762-4k51aojfhb8sak328irjelrpo8d4k9ci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrOjfgEqael5vQmQDVVlPmFJiB7UmCsQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759263621762-4k51aojfhb8sak328irjelrpo8d4k9ci.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "759263621762-upulmeocflap8ufg9mmaddin29vr4hd2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yestolibre"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759263621762:android:af7f7ff1190d83f6cb3a9b",
+        "android_client_info": {
+          "package_name": "com.yestolibre_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759263621762-4k51aojfhb8sak328irjelrpo8d4k9ci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrOjfgEqael5vQmQDVVlPmFJiB7UmCsQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759263621762-4k51aojfhb8sak328irjelrpo8d4k9ci.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "759263621762-upulmeocflap8ufg9mmaddin29vr4hd2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yestolibre"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
