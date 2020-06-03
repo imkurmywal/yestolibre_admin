@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yestolibre_admin/src/models/merchant.dart';
 
 class AddPartner extends StatefulWidget {
+  Merchant merchant;
+  AddPartner({this.merchant});
+
   @override
   _AddPartnerState createState() => _AddPartnerState();
 }
@@ -27,6 +31,25 @@ class _AddPartnerState extends State<AddPartner> {
     setState(() {
       _image = File(pickedFile.path);
     });
+  }
+
+  setupUpdateMerchant() {
+    _partnerName.text = widget.merchant.name;
+    _address.text = widget.merchant.address;
+    _latitude.text = widget.merchant.latitude.toString();
+    _longitude.text = widget.merchant.longitude.toString();
+    _category.text = widget.merchant.category;
+    _contactNumber.text = widget.merchant.phoneNumber;
+    _link.text = widget.merchant.fbUrl;
+    // _image = File(widget.merchant.logoUrl);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.merchant != null) {
+      setupUpdateMerchant();
+    }
   }
 
   @override
@@ -189,11 +212,30 @@ class _AddPartnerState extends State<AddPartner> {
                 height: 10,
               ),
               _image != null
-                  ? FittedBox(
-                      child: Image.file(_image),
-                      fit: BoxFit.contain,
+                  ? Center(
+                      child: Container(
+                        height: 200,
+                        width: 200,
+                        child: FittedBox(
+                          child: Image.file(_image),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     )
-                  : Text(""),
+                  :
+                  // widget.merchant != null
+                  //     ? Center(
+                  //         child: Container(
+                  //           height: 200,
+                  //           width: 200,
+                  //           child: FittedBox(
+                  //             child: Image.network(widget.merchant.logoUrl),
+                  //             fit: BoxFit.contain,
+                  //           ),
+                  //         ),
+                  //       )
+                  //     :
+                  Text(""),
               // ListView(
               //   children: [Text("First Elememnt"), Text("First Elememnt")],
               // ),

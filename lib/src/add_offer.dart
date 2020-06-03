@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yestolibre_admin/src/models/offer.dart';
 
 class AddOffer extends StatefulWidget {
+  Offer offer;
+  AddOffer({this.offer});
   @override
   _AddOfferState createState() => _AddOfferState();
 }
@@ -27,6 +30,22 @@ class _AddOfferState extends State<AddOffer> {
     setState(() {
       _image = File(pickedFile.path);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.offer != null) {
+      setupUpdateOffer();
+    }
+  }
+
+  setupUpdateOffer() {
+    _offerTitle.text = widget.offer.title;
+    _type.text = widget.offer.type;
+    _code.text = widget.offer.code;
+    _termsAndConditions.text = widget.offer.termsConditions;
+    _offPercent.text = widget.offer.offPercent;
   }
 
   @override

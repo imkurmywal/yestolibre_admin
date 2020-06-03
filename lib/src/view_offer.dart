@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
 
 import 'package:yestolibre_admin/src/view_coupon.dart';
@@ -201,6 +202,17 @@ class _ViewOfferState extends State<ViewOffer> {
             )
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.edit),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddOffer(
+                        offer: widget.merchant.offers[widget.index],
+                      )));
+        },
       ),
     );
   }
