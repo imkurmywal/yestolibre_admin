@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:yestolibre_admin/src/add_carousel.dart';
 import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/add_partner.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
@@ -109,6 +110,25 @@ class _MerchantViewState extends State<MerchantView> {
             });
           },
           label: 'Add Offer',
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
+          labelBackgroundColor: Theme.of(context).primaryColor,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.edit),
+          backgroundColor: Theme.of(context).primaryColor,
+          onTap: () {
+            setState(() {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (cotnext) => AddCarousel(
+                      carousel: widget.merchant.carousel,
+                    ),
+                  ));
+            });
+          },
+          label: 'Edit Carousel',
           labelStyle: TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
           labelBackgroundColor: Theme.of(context).primaryColor,

@@ -22,14 +22,14 @@ class _AddPartnerState extends State<AddPartner> {
   TextEditingController _contactNumber = new TextEditingController();
   TextEditingController _link = new TextEditingController();
 
-  File _image;
+  Image _image;
   final picker = ImagePicker();
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = File(pickedFile.path);
+      _image = Image.file(File(pickedFile.path));
     });
   }
 
@@ -41,7 +41,7 @@ class _AddPartnerState extends State<AddPartner> {
     _category.text = widget.merchant.category;
     _contactNumber.text = widget.merchant.phoneNumber;
     _link.text = widget.merchant.fbUrl;
-    // _image = File(widget.merchant.logoUrl);
+    _image = Image.network(widget.merchant.logoUrl);
   }
 
   @override
@@ -217,7 +217,7 @@ class _AddPartnerState extends State<AddPartner> {
                         height: 200,
                         width: 200,
                         child: FittedBox(
-                          child: Image.file(_image),
+                          child: _image,
                           fit: BoxFit.contain,
                         ),
                       ),

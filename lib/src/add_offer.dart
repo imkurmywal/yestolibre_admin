@@ -21,14 +21,14 @@ class _AddOfferState extends State<AddOffer> {
   // TextEditingController _contactNumber = new TextEditingController();
   // TextEditingController _link = new TextEditingController();
 
-  File _image;
+  Image _image;
   final picker = ImagePicker();
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _image = File(pickedFile.path);
+      _image = Image.file(File(pickedFile.path));
     });
   }
 
@@ -46,6 +46,7 @@ class _AddOfferState extends State<AddOffer> {
     _code.text = widget.offer.code;
     _termsAndConditions.text = widget.offer.termsConditions;
     _offPercent.text = widget.offer.offPercent;
+    _image = Image.network(widget.offer.imageUrl);
   }
 
   @override
@@ -175,9 +176,10 @@ class _AddOfferState extends State<AddOffer> {
                 height: 10,
               ),
               _image != null
-                  ? FittedBox(
-                      child: Image.file(_image),
-                      fit: BoxFit.contain,
+                  ? Container(
+                      height: 200,
+                      // width: 200,
+                      child: _image,
                     )
                   : Text(""),
               Row(

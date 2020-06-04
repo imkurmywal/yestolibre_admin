@@ -4,19 +4,38 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddCarousel extends StatefulWidget {
+  List<dynamic> carousel;
+  AddCarousel({this.carousel});
   @override
   _AddCarouselState createState() => _AddCarouselState();
 }
 
 class _AddCarouselState extends State<AddCarousel> {
-  List<File> _images = List<File>();
+  List<Image> _images = List<Image>();
   final picker = ImagePicker();
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _images.add(File(pickedFile.path));
+      _images.add(Image.file(File(pickedFile.path)));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.carousel != null) {
+      setupCarousel();
+    }
+  }
+
+  setupCarousel() {
+    _images.clear();
+    widget.carousel.forEach((url) {
+      setState(() {
+        _images.add(Image.network(url));
+      });
     });
   }
 
@@ -31,18 +50,44 @@ class _AddCarouselState extends State<AddCarousel> {
             itemCount: _images.length,
             itemBuilder: (context, index) {
               return GestureDetector(
-                onDoubleTap: () {
-                  showAlertDialog(context, index);
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(14, 10, 14, 0),
-                  height: 220,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: Image.file(_images[index]),
-                  ),
-                ),
-              );
+                  onDoubleTap: () {
+                    showAlertDialog(context, index);
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(14, 10, 14, 0),
+                        height: 220,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: _images[index],
+                        ),
+                      ),
+                      index == _images.length - 1
+                          ? Container(
+                              margin: EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ButtonTheme(
+                                    child: RaisedButton(
+                                      color: Theme.of(context).primaryColor,
+                                      child: Text(
+                                        "Save Carousel",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white),
+                                      ),
+                                      onPressed: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          : Container()
+                    ],
+                  ));
             }),
       ),
       floatingActionButton: FloatingActionButton(
