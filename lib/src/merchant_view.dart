@@ -132,6 +132,15 @@ class _MerchantViewState extends State<MerchantView> {
           labelStyle: TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
           labelBackgroundColor: Theme.of(context).primaryColor,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.delete),
+          backgroundColor: Theme.of(context).primaryColor,
+          onTap: () {},
+          label: 'Delete Partner',
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
+          labelBackgroundColor: Theme.of(context).primaryColor,
         )
       ],
     );

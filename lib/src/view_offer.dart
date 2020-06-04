@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
 
@@ -203,17 +204,46 @@ class _ViewOfferState extends State<ViewOffer> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.edit),
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AddOffer(
-                        offer: widget.merchant.offers[widget.index],
-                      )));
-        },
-      ),
+      floatingActionButton: _getFAB(),
+    );
+  }
+
+  Widget _getFAB() {
+    return SpeedDial(
+      animatedIcon: AnimatedIcons.menu_close,
+      animatedIconTheme: IconThemeData(size: 22),
+      backgroundColor: Theme.of(context).primaryColor,
+      visible: true,
+      curve: Curves.bounceIn,
+      children: [
+        SpeedDialChild(
+          child: Icon(Icons.edit),
+          backgroundColor: Theme.of(context).primaryColor,
+          onTap: () {
+            setState(() {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddOffer(
+                            offer: widget.merchant.offers[widget.index],
+                          )));
+            });
+          },
+          label: 'Edit Offer',
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
+          labelBackgroundColor: Theme.of(context).primaryColor,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.delete),
+          backgroundColor: Theme.of(context).primaryColor,
+          onTap: () {},
+          label: 'Delete Offer',
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
+          labelBackgroundColor: Theme.of(context).primaryColor,
+        )
+      ],
     );
   }
 }
