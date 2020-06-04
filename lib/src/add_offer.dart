@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:yestolibre_admin/src/models/offer.dart';
+import 'package:yestolibre_admin/widgets/alert.dart';
 
 class AddOffer extends StatefulWidget {
   Offer offer;
@@ -176,12 +177,17 @@ class _AddOfferState extends State<AddOffer> {
                 height: 10,
               ),
               _image != null
-                  ? Container(
-                      height: 200,
-                      // width: 200,
-                      child: _image,
+                  ? Center(
+                      child: Container(
+                        height: 200,
+                        // width: 200,
+                        child: _image,
+                      ),
                     )
                   : Text(""),
+              SizedBox(
+                height: 10,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -195,7 +201,16 @@ class _AddOfferState extends State<AddOffer> {
                             fontWeight: FontWeight.w700,
                             color: Colors.white),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (!runValidation()) {
+                          Alert.shared.showError(
+                              context: context,
+                              message: "All the input data are required",
+                              title: "Error");
+                          return;
+                        }
+                        print("image saved.");
+                      },
                     ),
                   )
                 ],
@@ -214,5 +229,19 @@ class _AddOfferState extends State<AddOffer> {
       hintText: hint,
       border: InputBorder.none,
     );
+  }
+
+  bool runValidation() {
+    if (_offerTitle.text.length == 0 ||
+        _code.text.length == 0 ||
+        _type.text.length == 0 ||
+        _termsAndConditions.text.length == 0 ||
+        _offPercent.text.length == 0) {
+      return false;
+    }
+    if (_image == null) {
+      return false;
+    }
+    return true;
   }
 }

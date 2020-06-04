@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
+import 'package:yestolibre_admin/widgets/alert.dart';
 
 class AddPartner extends StatefulWidget {
   Merchant merchant;
@@ -252,7 +253,16 @@ class _AddPartnerState extends State<AddPartner> {
                             fontWeight: FontWeight.w700,
                             color: Colors.white),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (!runValidation()) {
+                          Alert.shared.showError(
+                              context: context,
+                              message: "All the input data are required",
+                              title: "Error");
+                          return;
+                        }
+                        print("image saved.");
+                      },
                     ),
                   )
                 ],
@@ -271,5 +281,21 @@ class _AddPartnerState extends State<AddPartner> {
       hintText: hint,
       border: InputBorder.none,
     );
+  }
+
+  bool runValidation() {
+    if (_partnerName.text.length == 0 ||
+        _category.text.length == 0 ||
+        _contactNumber.text.length == 0 ||
+        _latitude.text.length == 0 ||
+        _longitude.text.length == 0 ||
+        _link.text.length == 0 ||
+        _address.text.length == 0) {
+      return false;
+    }
+    if (_image == null) {
+      return false;
+    }
+    return true;
   }
 }

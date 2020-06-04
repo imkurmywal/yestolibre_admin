@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yestolibre_admin/widgets/alert.dart';
 
 class AddCarousel extends StatefulWidget {
   List<dynamic> carousel;
@@ -79,7 +80,17 @@ class _AddCarouselState extends State<AddCarousel> {
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white),
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        if (_images.length == 0) {
+                                          Alert.shared.showError(
+                                              context: context,
+                                              message:
+                                                  "Atleast one image is required to add carousel",
+                                              title: "Error");
+                                          return;
+                                        }
+                                        print("image saved.");
+                                      },
                                     ),
                                   )
                                 ],
