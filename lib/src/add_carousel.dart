@@ -90,6 +90,8 @@ class _AddCarouselState extends State<AddCarousel> {
                                           return;
                                         }
                                         print("image saved.");
+                                        Navigator.popUntil(
+                                            context, (route) => route.isFirst);
                                       },
                                     ),
                                   )

@@ -57,6 +57,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.12"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.5"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -110,6 +124,13 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_database
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.6"
+  firebase_storage:
+    dependency: "direct main"
+    description:
+      name: firebase_storage
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.6"
@@ -301,6 +322,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.7"
+  uuid:
+    dependency: "direct main"
+    description:
+      name: uuid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.4"
   vector_math:
     dependency: transitive
     description:

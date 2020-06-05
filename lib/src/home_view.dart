@@ -11,6 +11,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  TextEditingController _searchField = new TextEditingController();
   List<Merchant> allMerchants = List<Merchant>();
   List<Merchant> filteredMerchants = List<Merchant>();
   bool _isFetching = true;
@@ -32,7 +33,8 @@ class _HomeViewState extends State<HomeView> {
       merchant.offers.forEach((offer) {
         if (offer.title.toLowerCase().contains(keywd) ||
             merchant.name.toLowerCase().contains(keywd) ||
-            merchant.address.toLowerCase().contains(keywd)) {
+            merchant.address.toLowerCase().contains(keywd) ||
+            merchant.category.toLowerCase().contains(keywd)) {
           filteredMerchants.add(merchant);
         }
       });
@@ -64,14 +66,21 @@ class _HomeViewState extends State<HomeView> {
               ),
               Expanded(
                 child: TextField(
-                  textInputAction: TextInputAction.search,
+                  controller: _searchField,
+                  textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                       hintText: "Search Name", border: InputBorder.none),
                   onChanged: (keyword) {
                     setState(() {
                       _isSearching = true;
                       filterByKeyword(keyword: keyword);
-                      // _isSearching = false;
+                    });
+                  },
+                  onSubmitted: (keyword) {
+                    setState(() {
+                      _searchField.text = "";
+                      filteredMerchants.clear();
+                      _isSearching = false;
                     });
                   },
                 ),

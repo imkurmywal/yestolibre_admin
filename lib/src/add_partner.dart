@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_storage.dart';
+import 'package:yestolibre_admin/src/add_carousel.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
 import 'package:yestolibre_admin/widgets/alert.dart';
 
@@ -25,7 +29,7 @@ class _AddPartnerState extends State<AddPartner> {
 
   Image _image;
   final picker = ImagePicker();
-
+  int _state = 0;
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -223,49 +227,27 @@ class _AddPartnerState extends State<AddPartner> {
                         ),
                       ),
                     )
-                  :
-                  // widget.merchant != null
-                  //     ? Center(
-                  //         child: Container(
-                  //           height: 200,
-                  //           width: 200,
-                  //           child: FittedBox(
-                  //             child: Image.network(widget.merchant.logoUrl),
-                  //             fit: BoxFit.contain,
-                  //           ),
-                  //         ),
-                  //       )
-                  //     :
-                  Text(""),
-              // ListView(
-              //   children: [Text("First Elememnt"), Text("First Elememnt")],
-              // ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ButtonTheme(
-                    child: RaisedButton(
-                      color: Theme.of(context).primaryColor,
-                      child: Text(
-                        "Add Merchant",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (!runValidation()) {
-                          Alert.shared.showError(
-                              context: context,
-                              message: "All the input data are required",
-                              title: "Error");
-                          return;
-                        }
-                        print("image saved.");
-                      },
-                    ),
-                  )
-                ],
+                  : Text(""),
+              MaterialButton(
+                child: setUpButtonChild(),
+                onPressed: () {
+                  // if (!runValidation()) {
+                  //   Alert.shared.showError(
+                  //       context: context,
+                  //       message: "All the inputs are required.",
+                  //       title: "Error");
+                  // }
+
+                  setState(() {
+                    if (_state == 0) {
+                      animateButton();
+                    }
+                  });
+                },
+                elevation: 4.0,
+                minWidth: double.infinity,
+                height: 40.0,
+                color: Theme.of(context).primaryColor,
               ),
             ],
           ),
@@ -283,6 +265,54 @@ class _AddPartnerState extends State<AddPartner> {
     );
   }
 
+  Widget setUpButtonChild() {
+    if (_state == 0) {
+      return new Text(
+        "Add Partner",
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 17.0,
+        ),
+      );
+    } else if (_state == 1) {
+      return CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      );
+    } else {
+      return Icon(Icons.check, color: Colors.white);
+    }
+  }
+
+  void animateButton() {
+    setState(() {
+      _state = 1;
+    });
+    // Timer(Duration(milliseconds: 3300), () {
+    //   setState(() {
+    //     _state = 2;
+    //   });
+    // });
+  }
+
+  askForCarousel() {
+    Alert.shared.askYesNo(
+        context: context,
+        title: "Success",
+        message: "Do you want to add carousel now?",
+        btnTitle: "Add carousel",
+        done: (value) {
+          if (value) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (cotnext) => AddCarousel(),
+                ));
+          } else {
+            Navigator.pop(context);
+          }
+        });
+  }
+
   bool runValidation() {
     if (_partnerName.text.length == 0 ||
         _category.text.length == 0 ||
@@ -297,5 +327,17 @@ class _AddPartnerState extends State<AddPartner> {
       return false;
     }
     return true;
+  }
+
+  savePartnerData() {
+    String uid = "";
+    // if its update operation or new one.
+    if (widget.merchant != null) {
+      uid = Uuid().v4();
+    } else {
+      uid = widget.merchant.merchantId;
+    }
+    // MerchantST.shared.getImageURL(
+    //     id: uid, path: "merchants_Logos/$uid.jpg", file: _image.f);
   }
 }

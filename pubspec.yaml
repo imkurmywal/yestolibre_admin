@@ -32,10 +32,12 @@ dependencies:
   dotted_border: ^1.0.5
   firebase_core: ^0.4.0+9
   firebase_database: ^3.1.5
+  firebase_storage: ^3.1.6
   url_launcher: 5.2.7
   image_picker: ^0.6.7
   adaptive_dialog: ^0.6.4
   flutter_speed_dial: ^1.2.5
+  uuid: 2.0.4
 
 dev_dependencies:
   flutter_test:

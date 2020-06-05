@@ -32,7 +32,7 @@ class MerchantDB {
   stopListenToMerchant() {
     _merchantListner.cancel();
   }
-
+  
   cancel() {
     _merchantsSubscription.cancel();
   }
