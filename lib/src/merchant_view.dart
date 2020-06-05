@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
 import 'package:yestolibre_admin/src/add_carousel.dart';
 import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/add_partner.dart';
@@ -22,6 +23,7 @@ class _MerchantViewState extends State<MerchantView> {
   void initState() {
     super.initState();
     generateListItems();
+    listenToMerchant();
   }
 
   void generateListItems() {
@@ -34,38 +36,55 @@ class _MerchantViewState extends State<MerchantView> {
     });
   }
 
+  listenToMerchant() {
+    MerchantDB.shared.listenToMerchant(
+        path: "merchants/${widget.merchant.merchantId}",
+        fetched: (merchant) {
+          setState(() {
+            widget.merchant = merchant;
+            generateListItems();
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Partner Details"),
-      ),
-      body: ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            final item = list[index];
-            if (index == 0) {
-              return Container(
-                child: item.buildCarousel(context),
-              );
-            }
-            return GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ViewOffer(merchant: widget.merchant, index: index - 1),
-                  ),
+    return WillPopScope(
+      onWillPop: () async {
+        MerchantDB.shared.stopListenToMerchant();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Partner Details"),
+        ),
+        body: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              if (index == 0) {
+                return Container(
+                  child: item.buildCarousel(context),
                 );
-              },
-              child: Container(
-                child: item.buildOfferInList(context),
-              ),
-            );
-          }),
-      floatingActionButton: _getFAB(),
+              }
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ViewOffer(
+                          merchant: widget.merchant, index: index - 1),
+                    ),
+                  );
+                },
+                child: Container(
+                  child: item.buildOfferInList(context),
+                ),
+              );
+            }),
+        floatingActionButton: _getFAB(),
+      ),
     );
   }
 

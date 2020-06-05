@@ -8,7 +8,8 @@ class MerchantDB {
   static MerchantDB shared = MerchantDB();
   final ref = FirebaseDatabase.instance.reference();
   StreamSubscription<Event> _merchantsSubscription;
-
+  StreamSubscription<Event> _merchantListner;
+  StreamSubscription<Event> _offerListener;
   getMerchants({Function fetched}) {
     List<Merchant> allMerchants = new List<Merchant>();
     _merchantsSubscription =
@@ -19,6 +20,17 @@ class MerchantDB {
       }
       fetched(allMerchants);
     });
+  }
+
+  listenToMerchant({String path, Function fetched}) {
+    _merchantListner = ref.child(path).onValue.listen((Event event) {
+      Merchant merchant = new Merchant.fromJson(event.snapshot.value);
+      fetched(merchant);
+    });
+  }
+
+  stopListenToMerchant() {
+    _merchantListner.cancel();
   }
 
   cancel() {

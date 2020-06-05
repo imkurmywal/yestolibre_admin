@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
 import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
 
@@ -22,28 +23,14 @@ class _ViewOfferState extends State<ViewOffer> {
     listenToMerchant();
   }
 
-  void countClaimNow() {
-    ref
-        .child(
-            "merchants/${widget.merchant.merchantId}/offers/${widget.merchant.offers[widget.index].offerId}")
-        .update({
-      "counted_claims":
-          "${int.parse(widget.merchant.offers[widget.index].countedClaims) + 1}",
-    });
-  }
-
-  void listenToMerchant() async {
-    ref
-        .child("merchants/${widget.merchant.merchantId}")
-        .onValue
-        .listen((Event event) {
-      if (event.snapshot.value == null) {
-        return;
-      }
-      setState(() {
-        widget.merchant = Merchant.fromJson(event.snapshot.value);
-      });
-    });
+  listenToMerchant() {
+    MerchantDB.shared.listenToMerchant(
+        path: "merchants/${widget.merchant.merchantId}",
+        fetched: (merchant) {
+          setState(() {
+            widget.merchant = merchant;
+          });
+        });
   }
 
   @override
