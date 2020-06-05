@@ -12,7 +12,9 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   List<Merchant> allMerchants = List<Merchant>();
+  List<Merchant> filteredMerchants = List<Merchant>();
   bool _isFetching = true;
+  bool _isSearching = false;
 
   void getList() async {
     MerchantDB.shared.getMerchants(fetched: (List<Merchant> merchants) {
@@ -23,9 +25,22 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  filterByKeyword({String keyword}) {
+    String keywd = keyword.toLowerCase();
+    filteredMerchants.clear();
+    allMerchants.forEach((merchant) {
+      merchant.offers.forEach((offer) {
+        if (offer.title.toLowerCase().contains(keywd) ||
+            merchant.name.toLowerCase().contains(keywd) ||
+            merchant.address.toLowerCase().contains(keywd)) {
+          filteredMerchants.add(merchant);
+        }
+      });
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getList();
   }
@@ -52,9 +67,11 @@ class _HomeViewState extends State<HomeView> {
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
                       hintText: "Search Name", border: InputBorder.none),
-                  onSubmitted: (keyword) {
+                  onChanged: (keyword) {
                     setState(() {
-                      // filterByKeyword(keyword: keyword);
+                      _isSearching = true;
+                      filterByKeyword(keyword: keyword);
+                      // _isSearching = false;
                     });
                   },
                 ),
@@ -73,7 +90,9 @@ class _HomeViewState extends State<HomeView> {
                 )
               : Container(
                   child: ListView.builder(
-                      itemCount: allMerchants.length,
+                      itemCount: _isSearching
+                          ? filteredMerchants.length
+                          : allMerchants.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
@@ -81,11 +100,15 @@ class _HomeViewState extends State<HomeView> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => MerchantView(
-                                          merchant: allMerchants[index],
+                                          merchant: _isSearching
+                                              ? filteredMerchants[index]
+                                              : allMerchants[index],
                                         )));
                           },
                           child: ViewMerchantInList(
-                            merchant: allMerchants[index],
+                            merchant: _isSearching
+                                ? filteredMerchants[index]
+                                : allMerchants[index],
                           ),
                         );
                       }),
