@@ -6,7 +6,8 @@ import 'package:yestolibre_admin/widgets/alert.dart';
 
 class AddCarousel extends StatefulWidget {
   List<dynamic> carousel;
-  AddCarousel({this.carousel});
+  String merchantId;
+  AddCarousel({this.carousel, @required this.merchantId});
   @override
   _AddCarouselState createState() => _AddCarouselState();
 }

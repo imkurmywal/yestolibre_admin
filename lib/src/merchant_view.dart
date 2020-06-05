@@ -29,7 +29,9 @@ class _MerchantViewState extends State<MerchantView> {
   void generateListItems() {
     setState(() {
       list = List<ListItem>.generate(
-          widget.merchant.offers.length + 1,
+          widget.merchant.offers != null
+              ? widget.merchant.offers.length + 1
+              : 1,
           (i) => i == 0
               ? CreateCarousel(merchant: widget.merchant)
               : OfferInList(merchant: widget.merchant, index: i));
@@ -143,6 +145,7 @@ class _MerchantViewState extends State<MerchantView> {
                   MaterialPageRoute(
                     builder: (cotnext) => AddCarousel(
                       carousel: widget.merchant.carousel,
+                      merchantId: widget.merchant.merchantId,
                     ),
                   ));
             });

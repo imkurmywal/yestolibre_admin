@@ -47,20 +47,22 @@ class _CarouselWithIndicatorState extends State<MyCarousel> {
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: widget.merchant.carousel.map((url) {
-          int index = widget.merchant.carousel.indexOf(url);
-          return Container(
-            width: 8.0,
-            height: 8.0,
-            margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _current == index
-                  ? Color.fromRGBO(0, 0, 0, 0.9)
-                  : Color.fromRGBO(0, 0, 0, 0.4),
-            ),
-          );
-        }).toList(),
+        children: widget.merchant.carousel != null
+            ? widget.merchant.carousel.map((url) {
+                int index = widget.merchant.carousel.indexOf(url);
+                return Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _current == index
+                        ? Color.fromRGBO(0, 0, 0, 0.9)
+                        : Color.fromRGBO(0, 0, 0, 0.4),
+                  ),
+                );
+              }).toList()
+            : [getSingleDot()],
       ),
       SizedBox(
         height: 20,
@@ -235,15 +237,34 @@ class _CarouselWithIndicatorState extends State<MyCarousel> {
     ]);
   }
 
+  Widget getSingleDot() {
+    return Container(
+      width: 8.0,
+      height: 8.0,
+      margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+      decoration: BoxDecoration(
+          shape: BoxShape.circle, color: Color.fromRGBO(0, 0, 0, 0.9)),
+    );
+  }
+
   List<Widget> imageSliders() {
-    final List<Widget> imageSliders = widget.merchant.carousel
-        .map((item) => Container(
-              child: Container(
-                // margin: EdgeInsets.all(5.0),
-                child: Image.network(item, fit: BoxFit.cover, width: 1000.0),
-              ),
-            ))
-        .toList();
+    final List<Widget> imageSliders = widget.merchant.carousel != null
+        ? widget.merchant.carousel
+            .map((item) => Container(
+                  child: Container(
+                    // margin: EdgeInsets.all(5.0),
+                    child:
+                        Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                  ),
+                ))
+            .toList()
+        : [
+            Container(
+              // margin: EdgeInsets.all(5.0),
+              child: Image.network(widget.merchant.logoUrl,
+                  fit: BoxFit.cover, width: 1000.0),
+            ),
+          ];
     return imageSliders;
   }
 }

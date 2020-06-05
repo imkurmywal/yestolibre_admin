@@ -9,7 +9,7 @@ class MerchantDB {
   final ref = FirebaseDatabase.instance.reference();
   StreamSubscription<Event> _merchantsSubscription;
   StreamSubscription<Event> _merchantListner;
-  StreamSubscription<Event> _offerListener;
+
   getMerchants({Function fetched}) {
     List<Merchant> allMerchants = new List<Merchant>();
     _merchantsSubscription =
@@ -29,10 +29,18 @@ class MerchantDB {
     });
   }
 
+  saveMerchantData({String uid, Map<String, dynamic> value, Function saved}) {
+    ref.child("merchants/$uid").update(value).then((value) {
+      saved(true);
+    }).catchError((onError) {
+      saved(false);
+    });
+  }
+
   stopListenToMerchant() {
     _merchantListner.cancel();
   }
-  
+
   cancel() {
     _merchantsSubscription.cancel();
   }

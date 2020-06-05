@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
 import 'package:yestolibre_admin/src/Firebase/merchant_storage.dart';
 import 'package:yestolibre_admin/src/add_carousel.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
@@ -28,13 +29,17 @@ class _AddPartnerState extends State<AddPartner> {
   TextEditingController _link = new TextEditingController();
 
   Image _image;
+  File _imageFile;
   final picker = ImagePicker();
   int _state = 0;
+  String uid = "";
+
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
       _image = Image.file(File(pickedFile.path));
+      _imageFile = File(pickedFile.path);
     });
   }
 
@@ -52,6 +57,7 @@ class _AddPartnerState extends State<AddPartner> {
   @override
   void initState() {
     super.initState();
+    uid = Uuid().v4(); // everytime user visit it will create new key.
     if (widget.merchant != null) {
       setupUpdateMerchant();
     }
@@ -231,16 +237,17 @@ class _AddPartnerState extends State<AddPartner> {
               MaterialButton(
                 child: setUpButtonChild(),
                 onPressed: () {
-                  // if (!runValidation()) {
-                  //   Alert.shared.showError(
-                  //       context: context,
-                  //       message: "All the inputs are required.",
-                  //       title: "Error");
-                  // }
+                  if (!runValidation()) {
+                    Alert.shared.showError(
+                        context: context,
+                        message: "All the inputs are required.",
+                        title: "Error");
+                  }
 
                   setState(() {
                     if (_state == 0) {
                       animateButton();
+                      savePartnerData();
                     }
                   });
                 },
@@ -268,7 +275,7 @@ class _AddPartnerState extends State<AddPartner> {
   Widget setUpButtonChild() {
     if (_state == 0) {
       return new Text(
-        "Add Partner",
+        widget.merchant == null ? "Add Partner" : "Update Partner",
         style: const TextStyle(
           color: Colors.white,
           fontSize: 17.0,
@@ -294,7 +301,7 @@ class _AddPartnerState extends State<AddPartner> {
     // });
   }
 
-  askForCarousel() {
+  askForCarousel({@required String merchantId}) {
     Alert.shared.askYesNo(
         context: context,
         title: "Success",
@@ -305,7 +312,9 @@ class _AddPartnerState extends State<AddPartner> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (cotnext) => AddCarousel(),
+                  builder: (cotnext) => AddCarousel(
+                    merchantId: merchantId,
+                  ),
                 ));
           } else {
             Navigator.pop(context);
@@ -329,15 +338,57 @@ class _AddPartnerState extends State<AddPartner> {
     return true;
   }
 
-  savePartnerData() {
-    String uid = "";
+  savePartnerData() async {
     // if its update operation or new one.
     if (widget.merchant != null) {
-      uid = Uuid().v4();
-    } else {
       uid = widget.merchant.merchantId;
     }
-    // MerchantST.shared.getImageURL(
-    //     id: uid, path: "merchants_Logos/$uid.jpg", file: _image.f);
+
+    String urlString = await getURL(uid: uid);
+
+    Map<String, dynamic> map = {
+      "merchant_id": uid,
+      "name": _partnerName.text,
+      "category": _category.text,
+      "address": _address.text,
+      "logo_url": urlString,
+      "phone_number": _contactNumber.text,
+      "latitude": double.parse(_latitude.text),
+      "longitude": double.parse(_longitude.text),
+      "fb_url": _link.text
+    };
+    MerchantDB.shared.saveMerchantData(
+        uid: uid,
+        value: map,
+        saved: (value) {
+          if (value) {
+            setState(() {
+              _state = 2;
+
+              if (widget.merchant == null) {
+                askForCarousel(merchantId: uid);
+              } else {
+                Navigator.pop(context);
+              }
+            });
+          } else {
+            setState(() {
+              _state = 0;
+              Alert.shared.showError(
+                  context: context,
+                  title: "Error",
+                  message: "Partner data saving error occured.");
+            });
+          }
+        });
+  }
+
+  Future<String> getURL({String uid}) async {
+    if (_imageFile != null) {
+      return MerchantST.shared
+          .getImageURL(path: "merchants_logos/$uid", file: _imageFile);
+    } else {
+      return widget.merchant.logoUrl;
+    }
   }
 }

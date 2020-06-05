@@ -34,21 +34,22 @@ class Merchant {
   });
 
   factory Merchant.fromJson(Map<dynamic, dynamic> json) => Merchant(
-        merchantId: json["merchant_id"],
-        name: json["name"],
-        category: json["category"],
-        address: json["address"],
-        logoUrl: json["logo_url"],
-        phoneNumber: json["phone_number"],
-        latitude: json["latitude"].toDouble(),
-        longitude: json["longitude"].toDouble(),
-        fbUrl: json["fb_url"],
-        carousel: json["carousel"],
-        offers: Map.from(json["offers"])
-            .map((k, v) => MapEntry<dynamic, Offer>(k, Offer.fromJson(v)))
-            .values
-            .toList(),
-      );
+      merchantId: json["merchant_id"],
+      name: json["name"],
+      category: json["category"],
+      address: json["address"],
+      logoUrl: json["logo_url"],
+      phoneNumber: json["phone_number"],
+      latitude: json["latitude"].toDouble(),
+      longitude: json["longitude"].toDouble(),
+      fbUrl: json["fb_url"],
+      carousel: json["carousel"],
+      offers: json["offers"] != null
+          ? Map.from(json["offers"])
+              .map((k, v) => MapEntry<dynamic, Offer>(k, Offer.fromJson(v)))
+              .values
+              .toList()
+          : null);
   // Map<dynamic, dynamic> toJson() => {
   //       "merchant_id": merchantId,
   //       "name": name,
