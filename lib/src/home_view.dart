@@ -19,16 +19,16 @@ class _HomeViewState extends State<HomeView> {
 
   void getList() async {
     MerchantDB.shared.getMerchants(fetched: (List<Merchant> merchants) {
+      print("fetched..");
       setState(() {
-        _isFetching = false;
         allMerchants = merchants;
+        _isFetching = false;
       });
     });
   }
 
   filterByKeyword({String keyword}) {
     String keywd = keyword.toLowerCase();
-    print("keywd: .$keywd.");
     if (keywd == "") {
       setState(() {
         _isSearching = false;

@@ -146,6 +146,7 @@ class _MerchantViewState extends State<MerchantView> {
                     builder: (cotnext) => AddCarousel(
                       carousel: widget.merchant.carousel,
                       merchantId: widget.merchant.merchantId,
+                      toFirst: false,
                     ),
                   ));
             });

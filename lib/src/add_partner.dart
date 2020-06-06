@@ -314,6 +314,7 @@ class _AddPartnerState extends State<AddPartner> {
                 MaterialPageRoute(
                   builder: (cotnext) => AddCarousel(
                     merchantId: merchantId,
+                    toFirst: true,
                   ),
                 ));
           } else {

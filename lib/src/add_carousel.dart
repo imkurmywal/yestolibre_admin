@@ -1,26 +1,36 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_storage.dart';
 import 'package:yestolibre_admin/widgets/alert.dart';
+import 'package:yestolibre_admin/widgets/animated_btn.dart';
 
 class AddCarousel extends StatefulWidget {
   List<dynamic> carousel;
   String merchantId;
-  AddCarousel({this.carousel, @required this.merchantId});
+  bool toFirst;
+  AddCarousel(
+      {this.carousel, @required this.merchantId, @required this.toFirst});
   @override
   _AddCarouselState createState() => _AddCarouselState();
 }
 
 class _AddCarouselState extends State<AddCarousel> {
-  List<Image> _images = List<Image>();
+  List<CarouselModel> _images = List<CarouselModel>();
   final picker = ImagePicker();
-
+  int state = 0;
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _images.add(Image.file(File(pickedFile.path)));
+      _images.add(CarouselModel(
+          type: "file",
+          file: File(
+              pickedFile.path))); //.add(Image.file(File(pickedFile.path)));
     });
   }
 
@@ -36,7 +46,7 @@ class _AddCarouselState extends State<AddCarousel> {
     _images.clear();
     widget.carousel.forEach((url) {
       setState(() {
-        _images.add(Image.network(url));
+        _images.add(CarouselModel(type: "url", url: url));
       });
     });
   }
@@ -61,9 +71,10 @@ class _AddCarouselState extends State<AddCarousel> {
                         margin: EdgeInsets.fromLTRB(14, 10, 14, 0),
                         height: 220,
                         child: FittedBox(
-                          fit: BoxFit.fill,
-                          child: _images[index],
-                        ),
+                            fit: BoxFit.fill,
+                            child: _images[index].type == "url"
+                                ? Image.network(_images[index].url)
+                                : Image.file(_images[index].file)),
                       ),
                       index == _images.length - 1
                           ? Container(
@@ -74,12 +85,9 @@ class _AddCarouselState extends State<AddCarousel> {
                                   ButtonTheme(
                                     child: RaisedButton(
                                       color: Theme.of(context).primaryColor,
-                                      child: Text(
-                                        "Save Carousel",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white),
+                                      child: AnimateBtn(
+                                        state: state,
+                                        title: "Save Carousel",
                                       ),
                                       onPressed: () {
                                         if (_images.length == 0) {
@@ -90,9 +98,7 @@ class _AddCarouselState extends State<AddCarousel> {
                                               title: "Error");
                                           return;
                                         }
-                                        print("image saved.");
-                                        Navigator.popUntil(
-                                            context, (route) => route.isFirst);
+                                        saveCarousel();
                                       },
                                     ),
                                   )
@@ -111,6 +117,47 @@ class _AddCarouselState extends State<AddCarousel> {
         },
       ),
     );
+  }
+
+  saveCarousel() async {
+    setState(() {
+      state = 1;
+    });
+    // save images and get their urls
+    List<String> urls = List<String>();
+    for (CarouselModel image in _images) {
+      if (image.type == "url") {
+        urls.add(image.url);
+      } else {
+        String url = await MerchantST.shared.getImageURL(
+            path: "banner_images/${Uuid().v4()}", file: image.file);
+        urls.add(url);
+      }
+    }
+    // save urls in the database.
+    MerchantDB.shared.saveMerchantData(
+        uid: widget.merchantId,
+        value: {"carousel": urls},
+        saved: (value) {
+          if (value) {
+            setState(() {
+              state = 2;
+            });
+            if (widget.toFirst) {
+              Navigator.popUntil(context, (route) => route.isFirst);
+            } else {
+              Navigator.pop(context);
+            }
+          } else {
+            setState(() {
+              state = 0;
+            });
+            Alert.shared.showError(
+                context: context,
+                message: "Error while saving carousel",
+                title: "Error");
+          }
+        });
   }
 
   showAlertDialog(BuildContext context, int index) {
@@ -145,4 +192,11 @@ class _AddCarouselState extends State<AddCarousel> {
       },
     );
   }
+}
+
+class CarouselModel {
+  String url;
+  String type;
+  File file;
+  CarouselModel({@required this.type, this.url, this.file});
 }

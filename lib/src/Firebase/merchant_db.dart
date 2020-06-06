@@ -20,6 +20,9 @@ class MerchantDB {
       }
       fetched(allMerchants);
     });
+    _merchantsSubscription.onError((error) {
+      print(error);
+    });
   }
 
   listenToMerchant({String path, Function fetched}) {
@@ -36,7 +39,7 @@ class MerchantDB {
       saved(false);
     });
   }
-
+  
   stopListenToMerchant() {
     _merchantListner.cancel();
   }
