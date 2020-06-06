@@ -20,24 +20,29 @@ class _HomeViewState extends State<HomeView> {
   void getList() async {
     MerchantDB.shared.getMerchants(fetched: (List<Merchant> merchants) {
       setState(() {
-        allMerchants = merchants;
         _isFetching = false;
+        allMerchants = merchants;
       });
     });
   }
 
   filterByKeyword({String keyword}) {
     String keywd = keyword.toLowerCase();
-    filteredMerchants.clear();
-    allMerchants.forEach((merchant) {
-      merchant.offers.forEach((offer) {
-        if (offer.title.toLowerCase().contains(keywd) ||
-            merchant.name.toLowerCase().contains(keywd) ||
-            merchant.address.toLowerCase().contains(keywd) ||
-            merchant.category.toLowerCase().contains(keywd)) {
-          filteredMerchants.add(merchant);
-        }
+    print("keywd: .$keywd.");
+    if (keywd == "") {
+      setState(() {
+        _isSearching = false;
+        filteredMerchants.clear();
+        return;
       });
+    }
+    allMerchants.forEach((merchant) {
+      if (merchant.name.toLowerCase().contains(keywd) ||
+          merchant.address.toLowerCase().contains(keywd) ||
+          merchant.category.toLowerCase().contains(keywd)) {
+        filteredMerchants.add(merchant);
+        return;
+      }
     });
   }
 
@@ -73,14 +78,15 @@ class _HomeViewState extends State<HomeView> {
                   onChanged: (keyword) {
                     setState(() {
                       _isSearching = true;
+                      filteredMerchants.clear();
                       filterByKeyword(keyword: keyword);
                     });
                   },
                   onSubmitted: (keyword) {
                     setState(() {
+                      _isSearching = false;
                       _searchField.text = "";
                       filteredMerchants.clear();
-                      _isSearching = false;
                     });
                   },
                 ),
