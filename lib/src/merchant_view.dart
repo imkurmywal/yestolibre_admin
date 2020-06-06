@@ -126,7 +126,9 @@ class _MerchantViewState extends State<MerchantView> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (cotnext) => AddOffer(),
+                    builder: (cotnext) => AddOffer(
+                      merchanntId: widget.merchant.merchantId,
+                    ),
                   ));
             });
           },

@@ -213,6 +213,7 @@ class _ViewOfferState extends State<ViewOffer> {
                   MaterialPageRoute(
                       builder: (context) => AddOffer(
                             offer: widget.merchant.offers[widget.index],
+                            merchanntId: widget.merchant.merchantId,
                           )));
             });
           },

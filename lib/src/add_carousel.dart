@@ -27,10 +27,12 @@ class _AddCarouselState extends State<AddCarousel> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
-      _images.add(CarouselModel(
+      _images.add(
+        CarouselModel(
           type: "file",
-          file: File(
-              pickedFile.path))); //.add(Image.file(File(pickedFile.path)));
+          file: File(pickedFile.path),
+        ),
+      );
     });
   }
 

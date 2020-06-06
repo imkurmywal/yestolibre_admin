@@ -2,12 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
+import 'package:yestolibre_admin/src/Firebase/merchant_storage.dart';
 import 'package:yestolibre_admin/src/models/offer.dart';
 import 'package:yestolibre_admin/widgets/alert.dart';
+import 'package:yestolibre_admin/widgets/animated_btn.dart';
 
 class AddOffer extends StatefulWidget {
   Offer offer;
-  AddOffer({this.offer});
+  String merchanntId;
+  AddOffer({@required this.merchanntId, this.offer});
   @override
   _AddOfferState createState() => _AddOfferState();
 }
@@ -21,21 +26,25 @@ class _AddOfferState extends State<AddOffer> {
   TextEditingController _offPercent = new TextEditingController();
   // TextEditingController _contactNumber = new TextEditingController();
   // TextEditingController _link = new TextEditingController();
-
+  File _imageFile;
   Image _image;
   final picker = ImagePicker();
+  String offerId = "";
+  int state = 0;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
       _image = Image.file(File(pickedFile.path));
+      _imageFile = File(pickedFile.path);
     });
   }
 
   @override
   void initState() {
     super.initState();
+    offerId = Uuid().v4();
     if (widget.offer != null) {
       setupUpdateOffer();
     }
@@ -194,13 +203,11 @@ class _AddOfferState extends State<AddOffer> {
                   ButtonTheme(
                     child: RaisedButton(
                       color: Theme.of(context).primaryColor,
-                      child: Text(
-                        "Add Offer",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white),
-                      ),
+                      child: AnimateBtn(
+                          state: state,
+                          title: widget.offer == null
+                              ? "Add Offer"
+                              : "Update Offer"),
                       onPressed: () {
                         if (!runValidation()) {
                           Alert.shared.showError(
@@ -209,7 +216,7 @@ class _AddOfferState extends State<AddOffer> {
                               title: "Error");
                           return;
                         }
-                        print("image saved.");
+                        saveOffer();
                       },
                     ),
                   )
@@ -229,6 +236,60 @@ class _AddOfferState extends State<AddOffer> {
       hintText: hint,
       border: InputBorder.none,
     );
+  }
+
+  saveOffer() async {
+    setState(() {
+      state = 1;
+    });
+
+    if (widget.offer != null) {
+      offerId = widget.offer.offerId;
+    }
+
+    String urlString = await getURL(offerId: offerId);
+
+    Map<String, dynamic> map = {
+      "offer_id": offerId,
+      "title": _offerTitle.text,
+      "type": _type.text,
+      "terms_conditions": _termsAndConditions.text,
+      "image_url": urlString,
+      "off_discount": _offPercent.text,
+      "promo_code": _code.text,
+      "counted_claims": widget.offer != null ? widget.offer.countedClaims : "0"
+    };
+    Map<String, dynamic> offer = {
+      "offers": {offerId: map}
+    };
+    MerchantDB.shared.saveMerchantData(
+        uid: widget.merchanntId,
+        value: offer,
+        saved: (value) {
+          if (value) {
+            setState(() {
+              state = 2;
+            });
+            Navigator.pop(context);
+          } else {
+            setState(() {
+              state = 0;
+              Alert.shared.showError(
+                  context: context,
+                  title: "Error",
+                  message: "Offer data saving error occured.");
+            });
+          }
+        });
+  }
+
+  Future<String> getURL({String offerId}) async {
+    if (_imageFile != null) {
+      return MerchantST.shared
+          .getImageURL(path: "offer_images/$offerId", file: _imageFile);
+    } else {
+      return widget.offer.imageUrl;
+    }
   }
 
   bool runValidation() {
