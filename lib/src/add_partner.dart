@@ -138,6 +138,8 @@ class _AddPartnerState extends State<AddPartner> {
                           ),
                           TextField(
                             controller: this._latitude,
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
                             style: style,
                             decoration: decoration(hint: "Latitude"),
                           )
@@ -160,6 +162,8 @@ class _AddPartnerState extends State<AddPartner> {
                           ),
                           TextField(
                             controller: this._longitude,
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
                             style: style,
                             decoration: decoration(hint: "Longitude"),
                           )
@@ -181,8 +185,9 @@ class _AddPartnerState extends State<AddPartner> {
               ),
               TextField(
                 controller: this._contactNumber,
+                keyboardType: TextInputType.phone,
                 style: style,
-                decoration: decoration(hint: "+923120962362"),
+                decoration: decoration(hint: "+639661645400"),
               ),
               SizedBox(
                 height: 14,
@@ -199,6 +204,7 @@ class _AddPartnerState extends State<AddPartner> {
               ),
               TextField(
                 controller: this._link,
+                keyboardType: TextInputType.url,
                 style: style,
                 decoration: decoration(hint: "https://"),
               ),

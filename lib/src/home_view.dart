@@ -36,13 +36,18 @@ class _HomeViewState extends State<HomeView> {
         return;
       });
     }
-    allMerchants.forEach((merchant) {
+    allMerchants.forEach((merchant) async {
       if (merchant.name.toLowerCase().contains(keywd) ||
           merchant.address.toLowerCase().contains(keywd) ||
           merchant.category.toLowerCase().contains(keywd)) {
         filteredMerchants.add(merchant);
         return;
       }
+      merchant.offers.forEach((offer) {
+        if (offer.title.toLowerCase().contains(keywd)) {
+          filteredMerchants.add(merchant);
+        }
+      });
     });
   }
 
