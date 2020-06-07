@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-import 'package:yestolbre/src/home_view.dart';
+import 'package:yestolibre_admin/src/home_view.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
