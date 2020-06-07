@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
 import 'package:yestolibre_admin/src/add_carousel.dart';
 import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/add_partner.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
 import 'package:yestolibre_admin/src/view_offer.dart';
+import 'package:yestolibre_admin/widgets/alert.dart';
 import 'package:yestolibre_admin/widgets/carousel.dart';
 import 'package:yestolibre_admin/widgets/offer_in_list.dart';
 
@@ -49,8 +51,37 @@ class _MerchantViewState extends State<MerchantView> {
         });
   }
 
+  deletePartnerNow(ProgressDialog pr) {
+    MerchantDB.shared.deletionPartner(
+        merchant: widget.merchant,
+        done: (value) {
+          if (value) {
+            pr.hide().whenComplete(() {
+              Navigator.pop(context);
+            });
+          } else {
+            Alert.shared.showError(
+                context: context,
+                message: "Error whilte deleting partner",
+                title: "Error");
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // progress indicator.
+    ProgressDialog pr = ProgressDialog(context);
+    pr = ProgressDialog(
+      context,
+      type: ProgressDialogType.Normal,
+      isDismissible: false,
+      showLogs: false,
+    );
+    pr.style(
+      message: 'Deleting partner',
+    );
+
     return WillPopScope(
       onWillPop: () async {
         MerchantDB.shared.stopListenToMerchant();
@@ -85,12 +116,12 @@ class _MerchantViewState extends State<MerchantView> {
                 ),
               );
             }),
-        floatingActionButton: _getFAB(),
+        floatingActionButton: _getFAB(pr),
       ),
     );
   }
 
-  Widget _getFAB() {
+  Widget _getFAB(ProgressDialog pr) {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       animatedIconTheme: IconThemeData(size: 22),
@@ -161,7 +192,20 @@ class _MerchantViewState extends State<MerchantView> {
         SpeedDialChild(
           child: Icon(Icons.delete),
           backgroundColor: Theme.of(context).primaryColor,
-          onTap: () {},
+          onTap: () {
+            Alert.shared.askYesNo(
+                context: context,
+                title: "Warning",
+                message: "Are you sure want to delete this partner?",
+                btnTitle: "Delete",
+                done: (value) async {
+                  if (value) {
+                    Navigator.pop(context);
+                    await pr.show();
+                    deletePartnerNow(pr);
+                  }
+                });
+          },
           label: 'Delete Partner',
           labelStyle: TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),

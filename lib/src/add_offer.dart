@@ -259,12 +259,11 @@ class _AddOfferState extends State<AddOffer> {
       "promo_code": _code.text,
       "counted_claims": widget.offer != null ? widget.offer.countedClaims : "0"
     };
-    Map<String, dynamic> offer = {
-      "offers": {offerId: map}
-    };
-    MerchantDB.shared.saveMerchantData(
+
+    MerchantDB.shared.saveOffer(
         uid: widget.merchanntId,
-        value: offer,
+        offerId: offerId,
+        value: map,
         saved: (value) {
           if (value) {
             setState(() {

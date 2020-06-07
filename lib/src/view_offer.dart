@@ -1,11 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:yestolibre_admin/src/Firebase/merchant_db.dart';
 import 'package:yestolibre_admin/src/add_offer.dart';
 import 'package:yestolibre_admin/src/models/merchant.dart';
 
 import 'package:yestolibre_admin/src/view_coupon.dart';
+import 'package:yestolibre_admin/widgets/alert.dart';
 
 class ViewOffer extends StatefulWidget {
   Merchant merchant;
@@ -26,15 +28,47 @@ class _ViewOfferState extends State<ViewOffer> {
   listenToMerchant() {
     MerchantDB.shared.listenToMerchant(
         path: "merchants/${widget.merchant.merchantId}",
-        fetched: (merchant) {
+        fetched: (Merchant merchant) {
           setState(() {
-            widget.merchant = merchant;
+            if (merchant.offers != null) {
+              widget.merchant = merchant;
+            }
           });
+        });
+  }
+
+  deleteOffer(ProgressDialog pr) async {
+    MerchantDB.shared.deletingOffer(
+        offer: widget.merchant.offers[widget.index],
+        merchantId: widget.merchant.merchantId,
+        done: (value) {
+          if (value) {
+            pr.hide().whenComplete(() {
+              Navigator.pop(context);
+            });
+          } else {
+            Alert.shared.showError(
+                context: context,
+                message: "Error whilte deleting offer",
+                title: "Error");
+          }
         });
   }
 
   @override
   Widget build(BuildContext context) {
+    // progress indicator.
+    ProgressDialog pr = ProgressDialog(context);
+    pr = ProgressDialog(
+      context,
+      type: ProgressDialogType.Normal,
+      isDismissible: false,
+      showLogs: false,
+    );
+    pr.style(
+      message: 'Deleting offer',
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Offer Details"),
@@ -191,11 +225,11 @@ class _ViewOfferState extends State<ViewOffer> {
           ],
         ),
       ),
-      floatingActionButton: _getFAB(),
+      floatingActionButton: _getFAB(pr),
     );
   }
 
-  Widget _getFAB() {
+  Widget _getFAB(ProgressDialog pr) {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       animatedIconTheme: IconThemeData(size: 22),
@@ -225,7 +259,20 @@ class _ViewOfferState extends State<ViewOffer> {
         SpeedDialChild(
           child: Icon(Icons.delete),
           backgroundColor: Theme.of(context).primaryColor,
-          onTap: () {},
+          onTap: () async {
+            Alert.shared.askYesNo(
+                context: context,
+                title: "Warning",
+                message: "Are you sure want to delete this offer?",
+                btnTitle: "Delete",
+                done: (value) async {
+                  if (value) {
+                    Navigator.pop(context);
+                    await pr.show();
+                    deleteOffer(pr);
+                  }
+                });
+          },
           label: 'Delete Offer',
           labelStyle: TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
