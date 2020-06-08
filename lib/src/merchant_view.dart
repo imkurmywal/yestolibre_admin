@@ -112,6 +112,7 @@ class _MerchantViewState extends State<MerchantView> {
                   );
                 },
                 child: Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   child: item.buildOfferInList(context),
                 ),
               );

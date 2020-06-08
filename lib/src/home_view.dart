@@ -109,6 +109,7 @@ class _HomeViewState extends State<HomeView> {
                   child: Text("No Partners found"),
                 )
               : Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   child: ListView.builder(
                       itemCount: _isSearching
                           ? filteredMerchants.length
